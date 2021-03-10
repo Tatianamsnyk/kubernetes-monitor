@@ -19,7 +19,7 @@ users get all the default values of the chart, and are always pointing to the co
 """
 
 from sys import argv
-from os import mkdir, path, getcwd, environ
+from os import mkdir, getcwd, environ
 from tempfile import mkdtemp
 from subprocess import call
 from os import chdir
@@ -42,8 +42,6 @@ def createOperatorAndBuildOperatorImage(operator_tag: str, monitor_tag: str) -> 
     copytree("snyk-monitor", helm_chart_dir + "/" + "snyk-monitor")
     copy("snyk-operator/Makefile", new_operator_dir + "/" + "Makefile")
     copy("snyk-operator/Dockerfile", new_operator_dir + "/" + "Dockerfile")
-    copy("snyk-operator/bundle.Dockerfile",
-         new_operator_dir + "/" + "bundle.Dockerfile")
 
     helm_values_path = helm_chart_dir + "/" + "snyk-monitor/" + "values.yaml"
     with open(helm_values_path) as f:
@@ -52,14 +50,10 @@ def createOperatorAndBuildOperatorImage(operator_tag: str, monitor_tag: str) -> 
     with open(helm_values_path, "w") as f:
         f.write(updated_helm_values)
 
-    operator_sdk_path = path.abspath("operator-sdk")
-    copy(operator_sdk_path, new_operator_dir + "/" + "operator-sdk")
     return_path = getcwd()
-
     chdir(new_operator_dir)
     environ['VERSION'] = operator_tag
     call(["make", "docker-build"])
-    call(["make", "bundle-build"])
     chdir(return_path)
 
     rmtree(new_operator_dir)

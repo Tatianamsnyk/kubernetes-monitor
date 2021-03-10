@@ -7,7 +7,7 @@ from shutil import copy
 from sys import argv
 
 
-def createOperatorFromTemplate(new_version: str, new_operator_tag: str, new_monitor_tag: str, old_version: str = None) -> str:
+def createOperatorBundleFromTemplate(new_version: str, new_operator_tag: str, new_monitor_tag: str, old_version: str = None) -> str:
     new_operator_dir = mkdtemp()
 
     new_operator_version_dir = new_operator_dir + "/" + new_version
@@ -54,6 +54,6 @@ if __name__ == '__main__':
     new_operator_tag = argv[2]
     new_monitor_tag = argv[3]
     old_version = argv[4] if len(argv) == 5 else None
-    print(createOperatorFromTemplate(
+    print(createOperatorBundleFromTemplate(
         new_version, new_operator_tag, new_monitor_tag, old_version
     ))
