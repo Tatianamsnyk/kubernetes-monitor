@@ -19,7 +19,7 @@ def downloadOperatorSdk() -> None:
     current_sys = system()
     if current_sys == "Darwin":
         sdk = get(
-            "https://github.com/operator-framework/operator-sdk/releases/download/v0.15.1/operator-sdk-v0.15.1-x86_64-apple-darwin")
+            "https://github.com/operator-framework/operator-sdk/releases/download/v1.4.2/operator-sdk_darwin_amd64")
     else:
         raise RuntimeError("Unsupported system " + current_sys)
 

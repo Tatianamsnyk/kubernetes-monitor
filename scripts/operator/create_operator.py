@@ -19,14 +19,14 @@ users get all the default values of the chart, and are always pointing to the co
 """
 
 from sys import argv
-from os import mkdir, path, getcwd
+from os import mkdir, path, getcwd, environ
 from tempfile import mkdtemp
 from subprocess import call
 from os import chdir
 from shutil import copy, copytree, rmtree
 
 
-def createOperatorAndBuildOperatorImage(operator_name_and_tag: str, monitor_tag: str) -> None:
+def createOperatorAndBuildOperatorImage(operator_tag: str, monitor_tag: str) -> None:
     new_operator_dir = mkdtemp()
     print(new_operator_dir)
     helm_chart_dir = new_operator_dir + "/" + "helm-charts"
@@ -40,7 +40,10 @@ def createOperatorAndBuildOperatorImage(operator_name_and_tag: str, monitor_tag:
 
     # Copy the Helm chart to the new location
     copytree("snyk-monitor", helm_chart_dir + "/" + "snyk-monitor")
-    copytree("snyk-operator/build", new_operator_dir + "/" + "build")
+    copy("snyk-operator/Makefile", new_operator_dir + "/" + "Makefile")
+    copy("snyk-operator/Dockerfile", new_operator_dir + "/" + "Dockerfile")
+    copy("snyk-operator/bundle.Dockerfile",
+         new_operator_dir + "/" + "bundle.Dockerfile")
 
     helm_values_path = helm_chart_dir + "/" + "snyk-monitor/" + "values.yaml"
     with open(helm_values_path) as f:
@@ -50,15 +53,18 @@ def createOperatorAndBuildOperatorImage(operator_name_and_tag: str, monitor_tag:
         f.write(updated_helm_values)
 
     operator_sdk_path = path.abspath("operator-sdk")
+    copy(operator_sdk_path, new_operator_dir + "/" + "operator-sdk")
     return_path = getcwd()
 
     chdir(new_operator_dir)
-    call([operator_sdk_path, "build", operator_name_and_tag])
+    environ['VERSION'] = operator_tag
+    call(["make", "docker-build"])
+    call(["make", "bundle-build"])
     chdir(return_path)
 
     rmtree(new_operator_dir)
 
 
 if __name__ == '__main__':
-    _, operator_name_and_tag, monitor_tag = argv
-    createOperatorAndBuildOperatorImage(operator_name_and_tag, monitor_tag)
+    _, operator_tag, monitor_tag = argv
+    createOperatorAndBuildOperatorImage(operator_tag, monitor_tag)

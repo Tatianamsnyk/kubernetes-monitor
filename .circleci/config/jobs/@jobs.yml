@@ -38,7 +38,7 @@ build_and_upload_operator:
     - run:
         name: Download Operator SDK
         command: |
-          RELEASE_VERSION=v0.15.1
+          RELEASE_VERSION=v1.4.2
           DOWNLOAD_LOCATION=./operator-sdk
           CURL_FOLLOW_REDIRECTS="-L"
           curl ${CURL_FOLLOW_REDIRECTS} https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu -o ${DOWNLOAD_LOCATION}

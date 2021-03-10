@@ -6,12 +6,13 @@ from subprocess import call
 
 
 def createOperatorAndPushToDockerHub(operator_tag: str, monitor_tag: str, dockerhub_user: str, dockerhub_password: str) -> None:
-    operator_name_and_tag = "snyk/kubernetes-operator:" + operator_tag
-    createOperatorAndBuildOperatorImage(operator_name_and_tag, monitor_tag)
+    createOperatorAndBuildOperatorImage(operator_tag, monitor_tag)
     call(["docker", "login", "--username=" + dockerhub_user,
           "--password=" + dockerhub_password])
+    operator_name_and_tag = "snyk/kubernetes-operator:" + operator_tag
+    operator_bundle_name_and_tag = "snyk/kubernetes-operator-bundle:" + operator_tag
     call(["docker", "push", operator_name_and_tag])
-    pass
+    call(["docker", "push", operator_bundle_name_and_tag])
 
 
 if __name__ == '__main__':

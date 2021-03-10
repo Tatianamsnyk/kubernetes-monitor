@@ -55,3 +55,5 @@ snyk-operator/helm-charts
 
 snyk-monitor-operator-source.yaml
 operator-sdk
+
+__pycache__
